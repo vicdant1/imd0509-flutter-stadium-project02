@@ -74,4 +74,14 @@ abstract class _HomeControllerBase with Store {
   Future getClubById(String id) async {
     return await repository.getClubeById(id);
   }
+
+  @action
+  Future deleteEstadios(String nome) {
+    return repository.deleteEstadio(nome);
+  }
+
+  @action
+  Future patchEstadios(Estadios estadio, String nome) {
+    return repository.patchEstadio(nome, estadio);
+  }
 }

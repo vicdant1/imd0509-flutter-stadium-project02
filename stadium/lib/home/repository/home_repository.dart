@@ -81,9 +81,19 @@ class HomeRepository {
     }
   }
 
-  Future deleteJogador(String idEstadio) async {
+  Future deleteEstadio(String nome) async {
     try {
-      await dio.delete('/clubes/$idEstadio/jogadores/.json');
+      return dio.delete('/estadios/$nome/.json');
+    } catch (e) {
+      // Handle error
+    }
+  }
+
+  Future patchEstadio(String nome, Estadios estadio) async {
+    try {
+      return dio.patch('/estadios/.json', data: {
+        estadio.nome: estadio.toJson(),
+      });
     } catch (e) {
       // Handle error
     }

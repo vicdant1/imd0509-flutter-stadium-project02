@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -9,7 +10,13 @@ import 'package:stadium/models/estadios.dart';
 import 'package:stadium/utils/custom_snackbar.dart';
 
 class CreateEstadio extends StatefulWidget {
-  const CreateEstadio({super.key});
+  final bool? isEdit;
+  final String? nome;
+  const CreateEstadio({
+    Key? key,
+    this.isEdit,
+    this.nome,
+  }) : super(key: key);
 
   @override
   State<CreateEstadio> createState() => _CreateEstadioState();
@@ -21,14 +28,17 @@ class _CreateEstadioState extends State<CreateEstadio> {
   @override
   void initState() {
     controller.getClubes();
-    controller.nomeController.clear();
-    controller.descricaoController.clear();
-    controller.capacidadeMax.clear();
-    controller.imagemUrlController.clear();
-    controller.cidadeController.clear();
-    controller.enderecoController.clear();
-    controller.latitudeController.clear();
-    controller.longitudeController.clear();
+    if (widget.isEdit == false) {
+      controller.nomeController.clear();
+      controller.descricaoController.clear();
+      controller.capacidadeMax.clear();
+      controller.imagemUrlController.clear();
+      controller.cidadeController.clear();
+      controller.enderecoController.clear();
+      controller.latitudeController.clear();
+      controller.longitudeController.clear();
+    }
+
     super.initState();
   }
 
@@ -109,32 +119,59 @@ class _CreateEstadioState extends State<CreateEstadio> {
                   backgroundColor: const Color(0xff09554B),
                 ),
                 onPressed: () async {
-                  await controller.postEstadio(
-                    Estadios(
-                      nome: controller.nomeController.text,
-                      capacidade: controller.capacidadeMax.text,
-                      imagem: controller.imagemUrlController.text,
-                      descricao: controller.descricaoController.text,
-                      localizacao: controller.cidadeController.text,
-                      endereco: controller.enderecoController.text,
-                      lat: double.parse(controller.latitudeController.text),
-                      long: double.parse(controller.longitudeController.text),
-                      clubId: controller.idSelecionado,
-                      clubNome: controller.clubes
-                          .where((element) =>
-                              element.id == controller.idSelecionado)
-                          .first
-                          .nome,
-                    ),
-                  );
+                  if (widget.isEdit == true) {
+                    await controller.patchEstadios(
+                        Estadios(
+                          nome: controller.nomeController.text,
+                          capacidade: controller.capacidadeMax.text,
+                          imagem: controller.imagemUrlController.text,
+                          descricao: controller.descricaoController.text,
+                          localizacao: controller.cidadeController.text,
+                          endereco: controller.enderecoController.text,
+                          lat: double.parse(controller.latitudeController.text),
+                          long:
+                              double.parse(controller.longitudeController.text),
+                          clubId: controller.idSelecionado,
+                          clubNome: controller.clubes
+                              .where((element) =>
+                                  element.id == controller.idSelecionado)
+                              .first
+                              .nome,
+                        ),
+                        widget.nome ?? '');
+                    Modular.to.pop();
+                  } else {
+                    await controller.postEstadio(
+                      Estadios(
+                        nome: controller.nomeController.text,
+                        capacidade: controller.capacidadeMax.text,
+                        imagem: controller.imagemUrlController.text,
+                        descricao: controller.descricaoController.text,
+                        localizacao: controller.cidadeController.text,
+                        endereco: controller.enderecoController.text,
+                        lat: double.parse(controller.latitudeController.text),
+                        long: double.parse(controller.longitudeController.text),
+                        clubId: controller.idSelecionado,
+                        clubNome: controller.clubes
+                            .where((element) =>
+                                element.id == controller.idSelecionado)
+                            .first
+                            .nome,
+                      ),
+                    );
+                  }
+
                   controller.getEstadios();
-                  customSnackBar('Estádio criado com sucesso',
+                  customSnackBar(
+                      widget.isEdit == true
+                          ? 'Estadio editado com sucesso'
+                          : 'Estádio criado com sucesso',
                       context: context,
                       corFundo: const Color.fromARGB(255, 82, 151, 86),
                       icon: Icons.done);
                   Modular.to.pop();
                 },
-                child: const Text('Salvar'),
+                child: Text(widget.isEdit == true ? 'Editar' : 'Salvar'),
               ),
             ),
           ),

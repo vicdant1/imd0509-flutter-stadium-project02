@@ -144,6 +144,28 @@ mixin _$HomeController on _HomeControllerBase, Store {
   }
 
   @override
+  Future<dynamic> deleteEstadios(String nome) {
+    final _$actionInfo = _$_HomeControllerBaseActionController.startAction(
+        name: '_HomeControllerBase.deleteEstadios');
+    try {
+      return super.deleteEstadios(nome);
+    } finally {
+      _$_HomeControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  Future<dynamic> patchEstadios(Estadios estadio, String nome) {
+    final _$actionInfo = _$_HomeControllerBaseActionController.startAction(
+        name: '_HomeControllerBase.patchEstadios');
+    try {
+      return super.patchEstadios(estadio, nome);
+    } finally {
+      _$_HomeControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 valorSelecionado: ${valorSelecionado},

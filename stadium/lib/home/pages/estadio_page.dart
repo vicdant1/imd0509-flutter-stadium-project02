@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:stadium/home/home_controller.dart';
 import 'package:stadium/home/pages/clubes_page.dart';
+import 'package:stadium/home/pages/create_estadio_page.dart';
 import 'package:stadium/models/clubes.dart';
 import 'package:stadium/models/estadios.dart';
 
@@ -18,6 +19,7 @@ class EstadioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController controller = Modular.get();
     return Scaffold(
       appBar: CupertinoNavigationBar(
         middle: Text(estadio.nome),
@@ -65,6 +67,57 @@ class EstadioPage extends StatelessWidget {
                       height: 30,
                     ),
                     _buildMap(),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            controller.nomeController.text = estadio.nome;
+                            controller.descricaoController.text =
+                                estadio.descricao;
+                            controller.capacidadeMax.text =
+                                estadio.capacidade ?? '';
+                            controller.imagemUrlController.text =
+                                estadio.imagem;
+                            controller.cidadeController.text =
+                                estadio.localizacao;
+                            controller.enderecoController.text =
+                                estadio.endereco;
+                            controller.latitudeController.text =
+                                estadio.lat.toString();
+                            controller.longitudeController.text =
+                                estadio.long.toString();
+                            Modular.to.push(MaterialPageRoute(
+                                builder: (context) => CreateEstadio(
+                                      nome: estadio.nome,
+                                      isEdit: true,
+                                    )));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff09554B)),
+                          child: const Text('Editar Estádio')),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        await controller.deleteEstadios(estadio.nome);
+                        await controller.getEstadios();
+                        Modular.to.pop();
+                      },
+                      child: const Center(
+                        child: Text('Excluir estádio',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff09554B),
+                            )),
+                      ),
+                    ),
                     const SizedBox(
                       height: 50,
                     ),
